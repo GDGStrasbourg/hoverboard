@@ -29,6 +29,11 @@
       "label": "Speakers"
     },
     {
+      "route": "schedule",
+      "permalink": "/schedule",
+      "label": "Planning"
+    },
+    {
       "route": "job-offers",
       "permalink": "/job-offers",
       "label": "Jobs"
@@ -74,7 +79,7 @@
       "fontColor": "#424242"
     },
     "schedule": {
-      "title": "Schedule",
+      "title": "Planning",
       "metaDescription": "Choose your sessions to visit",
       "background": {
         "color": "#fff"
