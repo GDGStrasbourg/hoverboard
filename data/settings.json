@@ -37,6 +37,11 @@
       "route": "code-of-conduct",
       "permalink": "/code-of-conduct",
       "label": "Code Of Conduct"
+    },
+    {
+      "route": "schedule",
+      "permalink": "/schedule",
+      "label": "Planning"
     }
   ],
   "heroSettings": {
@@ -74,7 +79,7 @@
       "fontColor": "#424242"
     },
     "schedule": {
-      "title": "Schedule",
+      "title": "Planning",
       "metaDescription": "Choose your sessions to visit",
       "background": {
         "color": "#fff"
