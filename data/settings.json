@@ -29,6 +29,11 @@
       "label": "Speakers"
     },
     {
+      "route": "schedule",
+      "permalink": "/schedule",
+      "label": "Planning"
+    },
+    {
       "route": "job-offers",
       "permalink": "/job-offers",
       "label": "Jobs"
@@ -37,11 +42,6 @@
       "route": "code-of-conduct",
       "permalink": "/code-of-conduct",
       "label": "Code Of Conduct"
-    },
-    {
-      "route": "schedule",
-      "permalink": "/schedule",
-      "label": "Planning"
     }
   ],
   "heroSettings": {
