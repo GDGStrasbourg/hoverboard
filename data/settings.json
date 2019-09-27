@@ -197,22 +197,10 @@
         "name": "google",
         "label": "Se connecter avec Google",
         "url": "https://accounts.google.com"
-      },
-      {
-        "name": "facebook",
-        "label": "Se connecter avec Facebook",
-        "url": "https://www.facebook.com"
-      },
-      {
-        "name": "twitter",
-        "label": "Se connecter avec Twitter",
-        "url": "https://twitter.com"
       }
     ],
     "allowedProvidersUrl": [
-      "https://accounts.google.com",
-      "https://www.facebook.com",
-      "https://twitter.com"
+      "https://accounts.google.com"
     ]
   },
   "contentLoaders": {
