@@ -12,6 +12,7 @@ const CLOSE_DIALOG = 'app/Dialogs/CLOSE_DIALOG';
 const SET_DIALOG_DATA = 'app/Dialogs/SET_DIALOG_DATA';
 const SET_DIALOG_ERROR = 'app/Dialogs/SET_DIALOG_ERROR';
 const DIALOGS = {
+  JOBOFFER: 'jobOffer',
   SPEAKER: 'speaker',
   PREVIOUS_SPEAKER: 'previousSpeaker',
   SESSION: 'session',

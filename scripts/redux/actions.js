@@ -576,20 +576,22 @@ const teamActions = {
 };
 
 const jobOffersActions = {
-  fetchJobOffers: () => (dispatch) => {
+  fetchList: () => (dispatch) => {
     dispatch({
       type: FETCH_JOB_OFFERS,
     });
-
     firebase
       .firestore()
       .collection('jobOffers')
+      .orderBy('order', 'asc')
       .get()
-      .then((list) => {
-        list = list.docs.map((tmp) => tmp.data());
+      .then((snaps) => {
+        const list = snaps.docs.map((snap) => Object.assign({}, snap.data(), { id: snap.id }));
+        const obj = list.reduce((acc, curr) => Object.assign({}, acc, { [curr.id]: curr }), {});
         dispatch({
           type: FETCH_JOB_OFFERS_SUCCESS,
           payload: {
+            obj,
             list,
           },
         });

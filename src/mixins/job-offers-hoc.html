@@ -1,0 +1,36 @@
+<link rel="import" href="../mixins/redux-mixin.html">
+<script>
+  /* eslint-disable no-unused-vars */
+
+  /* @polymerMixin */
+  const JobOffersHoC = (subclass) => class extends ReduxMixin(subclass) {
+    static get properties() {
+      return {
+        jobOffers: {
+          type: Array,
+          statePath: 'jobOffers.list',
+        },
+        jobOffersMap: {
+          type: Object,
+          statePath: 'jobOffers.obj',
+        },
+        jobOffersFetching: {
+          type: Boolean,
+          statePath: 'jobOffers.fetching',
+        },
+        jobOffersFetchingError: {
+          type: Object,
+          statePath: 'jobOffers.fetchingError',
+        },
+      };
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+
+      if (!this.jobOffersFetching && (!this.jobOffers || !this.jobOffers.length)) {
+        this.dispatch(jobOffersActions.fetchList());
+      }
+    }
+  };
+</script>

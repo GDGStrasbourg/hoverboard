@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars,no-undef */
 const uiReducer = (state = initialState.ui, action) => {
   switch (action.type) {
@@ -380,6 +381,7 @@ const jobOffersReducer = (state = initialState.jobOffers, action) => {
         fetching: true,
         fetchingError: null,
         list: [],
+        obj: {},
       });
 
     case FETCH_JOB_OFFERS_FAILURE:
@@ -392,6 +394,7 @@ const jobOffersReducer = (state = initialState.jobOffers, action) => {
       return Object.assign({}, state, {
         fetching: false,
         list: action.payload.list,
+        obj: action.payload.obj,
       });
 
     default:

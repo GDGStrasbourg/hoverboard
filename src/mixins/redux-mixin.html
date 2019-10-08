@@ -29,6 +29,10 @@
       subRoute: '',
     },
     dialogs: {
+      [DIALOGS.JOBOFFER]: {
+        isOpened: false,
+        data: {},
+      },
       [DIALOGS.SPEAKER]: {
         isOpened: false,
         data: {},
@@ -111,6 +115,7 @@
       fetching: false,
       fetchingError: null,
       list: [],
+      obj: {},
     },
     user: {
       signedIn: false,

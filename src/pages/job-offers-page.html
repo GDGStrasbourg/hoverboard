@@ -1,20 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html" />
-<link
-  rel="import"
-  href="../../bower_components/marked-element/marked-element.html"
-/>
-<link
-  rel="import"
-  href="../../bower_components/plastic-image/plastic-image.html"
-/>
-<link
-  rel="import"
-  href="../../bower_components/paper-icon-button/paper-icon-button.html"
-/>
+<link rel="import" href="../../bower_components/marked-element/marked-element.html" />
+<link rel="import" href="../../bower_components/plastic-image/plastic-image.html" />
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html" />
+<link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html" />
 
-<link rel="import" href="../mixins/redux-mixin.html" />
+<link rel="import" href="../mixins/utils-functions.html">
+<link rel="import" href="../mixins/redux-mixin.html">
+<link rel="import" href="../mixins/job-offers-hoc.html">
 <link rel="import" href="../elements/shared-styles.html" />
+<link rel="import" href="../elements/content-loader.html">
+<link rel="import" href="../elements/text-truncate.html">
 
 <dom-module id="job-offers-page">
   <template>
@@ -31,10 +27,9 @@
       .description-wrapper {
         background-color: var(--secondary-background-color);
         width: 100%;
-        overflow: hidden;
       }
 
-      .job-offers-block {
+      .container {
         display: grid;
         grid-template-columns: 1fr;
         grid-gap: 24px;
@@ -45,7 +40,14 @@
         background: white;
         padding: 1em;
         box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
-        min-height: 260px;
+        height: 260px;
+        cursor: pointer;
+        color: var(--primary-text-color);
+        overflow: hidden;
+      }
+
+      .job-offer-details:hover {
+        background: rgba(0, 0, 0, 0.2);
       }
 
       .job-offer-title {
@@ -63,13 +65,13 @@
       }
 
       @media (min-width: 640px) {
-        .job-offers-block {
+        .container {
           grid-template-columns: repeat(2, 1fr);
         }
       }
 
       @media (min-width: 1024px) {
-        .job-offers-block {
+        .container {
           grid-template-columns: repeat(3, 1fr);
         }
       }
@@ -80,6 +82,12 @@
       description="{$ heroSettings.jobOffers.metaDescription $}"
       active="[[active]]"
     ></polymer-helmet>
+
+    <app-route
+      route="[[route]]"
+      pattern="/:jobOfferId"
+      data="{{routeData}}"
+    ></app-route>
 
     <hero-block
       background-image="{$ heroSettings.jobOffers.background.image $}"
@@ -102,18 +110,39 @@
         </marked-element>
       </div>
     </div>
+    <template is="dom-if" if="{{!contentLoaderVisibility}}">
+        <paper-progress indeterminate></paper-progress>
 
-    <div class="container job-offers-block">
+        <content-loader
+          class="container"
+          card-padding="32px"
+          card-height="260px"
+          avatar-size="128px"
+          avatar-circle="64px"
+          horizontal-position="50%"
+          box-shadow="var(--box-shadow)"
+          items-count="{$ contentLoaders.jobOffers.itemsCount $}"
+        ></content-loader>
+    </template>
+
+    <div class="container">
       <template is="dom-repeat" items="[[jobOffers]]" as="jobOffer">
-        <div class="job-offer-details" layout vertical start-justified start>
+        <a
+        href$="/job-offers/[[jobOffer.id]]/"
+        ga-on="click"
+        ga-event-category="jobOffer"
+        ga-event-action="open details"
+        ga-event-label$="[[jobOffer.title]]"
+        class="job-offer-details" layout vertical start-justified start>
           <h1 class="job-offer-title">{{ jobOffer.title }}</h1>
           <span class="job-offer-enterprise">
             <img src="{{ jobOffer.logo }}" height="42" class="job-offer-logo" />
             {{ jobOffer.enterprise }}
           </span>
-          <p class="job-offer-description">{{ jobOffer.description }}</p>
-          <a href="{{ jobOffer.link }}" class="job-offer-link">Voir plus</a>
-        </div>
+          <text-truncate lines="5">
+              <p class="job-offer-description">{{ jobOffer.description }}</p>
+          </text-truncate>
+        </a>
       </template>
     </div>
 
@@ -121,36 +150,59 @@
   </template>
 
   <script>
-    class JobOffersPage extends ReduxMixin(Polymer.Element) {
+
+    // eslint-disable-next-line no-undef
+    class JobOffersPage extends UtilsFunctions(ReduxMixin(JobOffersHoC(Polymer.Element))) {
       static get is() {
         return 'job-offers-page';
       }
 
       static get properties() {
         return {
+          route: Object,
+          routeData: Object,
           active: Boolean,
-          jobOffers: {
-            type: Array,
-            statePath: 'jobOffers.list',
-          },
-          jobOffersFetching: {
-            type: Boolean,
-            statePath: 'jobOffers.fetching',
-          },
-          jobOffersFetchingError: {
+          isDialogOpened: {
             type: Object,
-            statePath: 'jobOffers.fetchingError',
+            statePath: 'dialogs.jobOffer.isOpened',
+            observer: '_dialogStatusChanged',
+          },
+          contentLoaderVisibility: {
+            type: Boolean,
+            value: false,
           },
         };
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        if (
-          !this.jobOffersFetching &&
-          (!this.jobOffers || !this.jobOffers.length)
-        ) {
-          this.dispatch(jobOffersActions.fetchJobOffers());
+      static get observers() {
+        return [
+          '_openJobOfferDetails(active, jobOffers, jobOffersMap, routeData.jobOfferId)',
+          '_jobOffersChanged(jobOffers)',
+        ];
+      }
+
+      _jobOffersChanged() {
+        if (this.jobOffers && this.jobOffers.length) {
+          this.contentLoaderVisibility = true;
+        }
+      }
+
+      _dialogStatusChanged(nextState, prevState) {
+        if (!nextState && prevState && this.active && this.routeData.jobOfferId) {
+          history.back();
+        }
+      }
+
+      _openJobOfferDetails(active, jobOffers, jobOffersMap, id) {
+        if (jobOffers && jobOffers.length) {
+          requestAnimationFrame(() => {
+            if (active && id) {
+              const jobOfferData = jobOffersMap[id];
+              jobOfferData && dialogsActions.openDialog(DIALOGS.JOBOFFER, jobOfferData);
+            } else if (this.isDialogOpened) {
+              dialogsActions.closeDialog(DIALOGS.JOBOFFER);
+            }
+          });
         }
       }
     }

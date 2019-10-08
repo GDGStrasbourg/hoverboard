@@ -325,6 +325,7 @@
           <job-offers-page
             data-route="job-offers"
             data-path="pages/job-offers-page.html"
+            route="[[subroute]]"
           ></job-offers-page>
           <!--          <faq-page-->
           <!--            data-route="faq"-->
@@ -359,6 +360,13 @@
       with-backdrop="[[viewport.isTabletPlus]]"
       no-cancel-on-outside-click="[[viewport.isPhone]]"
     ></speaker-details>
+
+    <job-offer-details
+      opened="[[dialogs.jobOffer.isOpened]]"
+      job-offer="[[dialogs.jobOffer.data]]"
+      with-backdrop="[[viewport.isTabletPlus]]"
+      no-cancel-on-outside-click="[[viewport.isPhone]]"
+    ></job-offer-details>
 
     <previous-speaker-details
       opened="[[dialogs.previousSpeaker.isOpened]]"
