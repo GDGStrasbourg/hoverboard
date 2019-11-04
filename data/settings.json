@@ -124,10 +124,10 @@
     "name": "CCI Strasbourg",
     "city": "Strasbourg",
     "short": "Strasbourg, France",
-    "address": "224 Avenue de Colmar, 67100 Strasbourg",
+    "address": "234 Avenue de Colmar, 67100 Strasbourg",
     "pointer": {
-      "latitude": 48.5574439,
-      "longitude": 7.7411346,
+      "latitude": 48.5547142,
+      "longitude": 7.7451147,
       "zoom": 5
     },
     "mapCenter": {
